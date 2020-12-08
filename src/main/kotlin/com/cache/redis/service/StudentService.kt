@@ -23,17 +23,14 @@ class StudentService(
         return studentRepository.save(student)
     }
 
-    /**
-     * get with result as key instead the default argument key. The condition is required due to a spring issue.
-     */
-    @Cacheable(value = ["students"], key = "#result", condition = "#result != null")
+    @Cacheable(value = ["students"])
     fun get(id: String): Student {
         val student = studentRepository.findById(id).orElseThrow { Exception("Student not found") }
         logger().info("Retrieving from DB, student: $student")
         return student!!
     }
 
-    @CachePut(value = ["students"])
+    @CachePut(value = ["students"], key = "#result.id")
     fun update(student: Student): Student {
         logger().info("Update operation performed for student:$student")
         return studentRepository.save(student)
